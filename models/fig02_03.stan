@@ -3,20 +3,22 @@ data {
   vector[n] y;
 }
 parameters {
-  # 確率的レベル
   vector[n] mu;
-  # レベル撹乱項
+  real mu0;
   real<lower=0> sigma_level;
-  # 観測撹乱項
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
-  vector[n] yhat;
-  yhat = mu;
+  // reparameterize the full model
+  vector[n] delta;
+  delta[1] = mu[1] - mu0;
+  for (t in 2:n)
+    delta[t] = mu[t] - mu[t-1];
 }
 model {
-  for(t in 2:n)
-    mu[t] ~ normal(mu[t-1], sigma_level);
-
-  y ~ normal(yhat, sigma_irreg);
+  mu0 ~ normal(0, 2); // weakly information prior
+  sigma_level ~ exponential(10);
+  sigma_irreg ~ exponential(10);
+  delta ~ normal(0, sigma_level);
+  y ~ normal(mu, sigma_irreg);
 }

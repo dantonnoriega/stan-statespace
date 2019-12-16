@@ -1,4 +1,4 @@
-source('common.R', encoding = 'utf-8')
+source('R/common.R', encoding = 'utf-8')
 
 ## @knitr init_stan
 
@@ -13,7 +13,7 @@ standata <- within(list(), {
 
 ## @knitr show_model
 
-model_file <- '../models/fig06_01.stan'
+model_file <- 'models/fig06_01.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
 ## @knitr fit_stan
@@ -47,7 +47,7 @@ title <- '図 6.2 確定的レベルと干渉変数の古典的な回帰表現'
 df = data.frame(drivers = as.numeric(ukdrivers),
                 seats = as.numeric(ukseats))
 p <- ggplot(df, aes(x = seats, y = drivers)) +
-  geom_point() + 
+  geom_point() +
   stat_smooth(method = 'lm', se = FALSE)
 p + ggtitle(title)
 

@@ -4,11 +4,11 @@ data {
   vector[n] w;
 }
 parameters {
-  # 確定的レベル
+  // 確定的レベル
   real mu;
-  # 確定的係数
+  // 確定的係数
   real lambda;
-  # 観測撹乱項
+  // 観測撹乱項
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
@@ -16,6 +16,6 @@ transformed parameters {
   yhat = mu + lambda * w;
 }
 model {
-  # 式 6.2
+  // 式 6.2
   y ~ normal(yhat, sigma_irreg);
 }

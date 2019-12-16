@@ -3,11 +3,8 @@ data {
   real y[n];
 }
 parameters {
-  # 係数
   real slope;
-  # 切片
   real intercept;
-  # 撹乱項
   real<lower=0> sigma;
 }
 model {

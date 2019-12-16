@@ -4,13 +4,13 @@ data {
   vector[n] w;
 }
 parameters {
-  # 確率的レベル
+  // 確率的レベル
   vector[n] mu;
-  # 確定的係数
+  // 確定的係数
   real lambda;
-  # レベル撹乱項
+  // レベル撹乱項
   real<lower=0> sigma_level;
-  # 観測撹乱項
+  // 観測撹乱項
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
@@ -20,7 +20,7 @@ transformed parameters {
   }
 }
 model {
-  # 式 6.1
+  // 式 6.1
   for(t in 2:n)
     mu[t] ~ normal(mu[t-1], sigma_level);
   for(t in 1:n)

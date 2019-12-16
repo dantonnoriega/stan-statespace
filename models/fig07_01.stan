@@ -5,15 +5,15 @@ data {
   vector[n] w;
 }
 parameters {
-  # 確定的レベル
+  // 確定的レベル
   real mu;
-  # 確定的季節項
+  // 確定的季節項
   vector[11] seas;
-  # 確定的回帰係数
+  // 確定的回帰係数
   real beta;
-  # 確定的係数
+  // 確定的係数
   real lambda;
-  # 観測撹乱項
+  // 観測撹乱項
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
@@ -29,6 +29,6 @@ transformed parameters {
   yhat = mu + beta * x + lambda * w;
 }
 model {
-  # 式 7.1
+  // 式 7.1
   y ~ normal(yhat + seasonal, sigma_irreg);
 }

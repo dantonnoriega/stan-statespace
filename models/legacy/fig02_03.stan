@@ -3,11 +3,11 @@ data {
   vector[n] y;
 }
 parameters {
-  # 確率的レベル
+  // 確率的レベル
   vector[n] mu;
-  # レベル撹乱項
+  // レベル撹乱項
   real<lower=0> sigma_level;
-  # 観測撹乱項
+  // 観測撹乱項
   real<lower=0> sigma_irreg;
 }
 transformed parameters {

@@ -3,13 +3,13 @@ data {
   vector[n] y;
 }
 parameters {
-  # 確率的レベル
+  // 確率的レベル
   vector[n] mu;
-  # 確率的傾き
+  // 確率的傾き
   vector[n-1] v;
 
-  # 傾き撹乱項 < 観測撹乱項 < レベル撹乱項
-  # sigma_drift < irreg < level
+  // 傾き撹乱項 < 観測撹乱項 < レベル撹乱項
+  // sigma_drift < irreg < level
   positive_ordered[3] sigma;
 }
 transformed parameters {
@@ -17,7 +17,7 @@ transformed parameters {
   yhat = mu;
 }
 model {
-  # 式 3.1
+  // 式 3.1
   v[1] ~ normal(0, sigma[1]);
   for(t in 2:n-1)
     v[t] ~ normal(v[t-1], sigma[1]);

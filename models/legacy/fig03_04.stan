@@ -3,13 +3,13 @@ data {
   vector[n] y;
 }
 parameters {
-  # 確率的レベル
+  // 確率的レベル
   vector[n] mu;
-  # 確定的傾き
+  // 確定的傾き
   real v;
-  # レベル撹乱項
+  // レベル撹乱項
   real<lower=0> sigma_level;
-  # 観測撹乱項
+  // 観測撹乱項
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
@@ -19,7 +19,7 @@ transformed parameters {
   }
 }
 model {
-  # 式 3.3
+  // 式 3.3
   mu[1] ~ normal(y[1], sigma_level);
   for(t in 2:n)
     mu[t] ~ normal(mu[t-1] + v, sigma_level);

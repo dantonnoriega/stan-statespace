@@ -1,4 +1,4 @@
-source('common.R', encoding = 'utf-8')
+source('R/common.R', encoding = 'utf-8')
 
 ## @knitr init_stan
 
@@ -13,7 +13,7 @@ standata <- within(list(), {
 
 ## @knitr show_model
 
-model_file <- '../models/fig05_01.stan'
+model_file <- 'models/fig05_01.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
 ## @knitr fit_stan
@@ -53,7 +53,7 @@ df <- data.frame(drivers = as.vector(ukdrivers),
 
 p <- ggplot(df, aes(x = petrol)) +
   geom_point(aes(y = drivers)) +
-  geom_line(aes(y = stan), colour = 'blue') + 
+  geom_line(aes(y = stan), colour = 'blue') +
   stat_smooth(aes(y = drivers), method = 'lm', colour = 'red',
               linetype = 'dashed', se = FALSE)
 p + ggtitle(title)

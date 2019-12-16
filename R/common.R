@@ -8,7 +8,7 @@
 
 library(rstan)
 library(ggplot2)
-ggplot2::theme_set(theme_bw(base_family="HiraKakuProN-W3"))
+# ggplot2::theme_set(theme_bw(base_family="HiraKakuProN-W3"))
 library(ggfortify)
 
 # do in parallel
@@ -17,20 +17,20 @@ options(mc.cores = parallel::detectCores())
 
 ## @knitr ukdrivers
 
-ukdrivers <- read.table('../data/UKdriversKSI.txt', skip = 1)
+ukdrivers <- read.table('data/UKdriversKSI.txt', skip = 1)
 ukdrivers <- ts(ukdrivers[[1]], start = c(1969, 1), frequency = 12)
 ukdrivers <- log(ukdrivers)
 
 ## @knitr ukdriversm
 
-ukdriversm <- read.table('../data/UKfrontrearseatKSI.txt', skip = 1)
+ukdriversm <- read.table('data/UKfrontrearseatKSI.txt', skip = 1)
 colnames(ukdriversm) <- c('UK drivers KSI', 'front seat KSI', 'rear Seat KSI',
                           'Kilometers driven', 'petrol price')
 ukdriversm <- ts(ukdriversm, start = c(1969, 1), frequency = 12)
 
 ## @knitr ukpetrol
 
-ukpetrol <- read.table('../data/logUKpetrolprice.txt', skip = 1)
+ukpetrol <- read.table('data/logUKpetrolprice.txt', skip = 1)
 ukpetrol <- ts(ukpetrol, start = start(ukdrivers), frequency = frequency(ukdrivers))
 
 ## @knitr ukseats
@@ -40,7 +40,7 @@ ukseats <- ts(ukseats, start = start(ukdrivers), frequency = frequency(ukdrivers
 
 ## @knitr ukinflation
 
-ukinflation <- read.table('../data/UKinflation.txt', skip = 1)
+ukinflation <- read.table('data/UKinflation.txt', skip = 1)
 ukinflation <- ts(ukinflation[[1]], start = c(1950, 1), frequency = 4)
 
 ## @knitr ukpulse
@@ -52,7 +52,7 @@ ukpulse <- ts(ukpulse, start = start(ukinflation), frequency = frequency(ukinfla
 
 ## @knitr fatalities
 
-fatalities <- read.table('../data/NorwayFinland.txt', skip = 1)
+fatalities <- read.table('data/NorwayFinland.txt', skip = 1)
 colnames(fatalities) <- c('year', 'Norwegian_fatalities',
                           'Finnish_fatalities')
 norwegian_fatalities <- fatalities[['Norwegian_fatalities']]
@@ -62,14 +62,12 @@ finnish_fatalities <- log(ts(finnish_fatalities, start = 1970, frequency = 1))
 
 ## @knitr func_defs
 
-# モデルが収束しているか確認
 is.converged <- function(stanfit) {
-  summarized <- summary(stanfit)  
+  summarized <- summary(stanfit)
   all(summarized$summary[, 'Rhat'] < 1.1)
 }
 
-# 値がだいたい近いか確認
-is.almost.fitted <- function(result, expected, tolerance = 0.001) {
+is.almost.fitted <- function(result, expected, tolerance = 0.01) {
   if (abs(result - expected) > tolerance) {
     print(paste('Result is ', result))
     return(FALSE)

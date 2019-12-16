@@ -1,4 +1,4 @@
-source('common.R', encoding = 'utf-8')
+source('R/common.R', encoding = 'utf-8')
 
 ## @knitr init_stan
 
@@ -12,7 +12,7 @@ standata <- within(list(), {
 ## @knitr show_model
 
 # can use the same model as fig02_03
-model_file <- '../models/fig02_03.stan'
+model_file <- 'models/fig02_03.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
 ## @knitr fit_stan
