@@ -3,28 +3,26 @@ data {
   vector[n] y;
 }
 parameters {
-  // 確率的レベル
   vector[n] mu;
-  // 確定的傾き
   real v;
-  // レベル撹乱項
   real<lower=0> sigma_level;
-  // 観測撹乱項
-  real<lower=0> sigma_irreg;
-}
-transformed parameters {
-  vector[n] yhat;
-  yhat = mu;
+  real<lower=0> sigma_drift;
+  real<lower=0> sigma_model;
 }
 model {
-  // 式 3.3
-  mu[1] ~ normal(y[1], sigma_level);
-  for(t in 2:n)
-    mu[t] ~ normal(mu[t-1] + v, sigma_level);
+  // eq 3.1 in differenced format
+  vector[n-1] delta_mu;
+  vector[n] err;
 
-  y ~ normal(yhat, sigma_irreg);
+  for(t in 1:(n-1)) {
+    delta_mu[t] = mu[t+1] - mu[t] - v;
+  }
+  err = y - mu;
 
-  sigma_level ~ student_t(4, 0, 1);
-  sigma_irreg ~ student_t(4, 0, 1);
-  v ~ normal(0, 5);
+  sigma_level ~ exponential(2);
+  sigma_drift ~ exponential(2);
+  sigma_model ~ exponential(2);
+  v ~ normal(0, sigma_drift);
+  delta_mu ~ normal(0, sigma_level);
+  err ~ normal(0, sigma_model);
 }
