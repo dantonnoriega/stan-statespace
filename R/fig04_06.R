@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- ukdrivers
 
@@ -9,12 +9,12 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model
+## show_model
 
 model_file <- 'models/fig04_06.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 fit <- stan(file = model_file, data = standata,
             iter = 10000, chains = 4)
@@ -29,7 +29,7 @@ sigma_level <- get_posterior_mean(fit, par = 'sigma_level')[, 'mean-all chains']
 stopifnot(is.almost.fitted(sigma_irreg^2, 0.00351385))
 stopifnot(is.almost.fitted(sigma_level^2, 0.000945723))
 
-## @knitr output_figures
+## output_figures
 
 title <- 'Figure 4.6. Stochastic level.'
 title <- '図 4.6 確率的レベル'

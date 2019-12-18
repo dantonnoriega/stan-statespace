@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- finnish_fatalities
 
@@ -10,12 +10,12 @@ standata <-
     n <- length(y)
   })
 
-## @knitr show_model
+## show_model
 
 model_file <- 'models/fig03_05.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 fit <- stan(file = model_file, data = standata, chains = 4)
 stopifnot(is.converged(fit))
@@ -33,7 +33,7 @@ is.almost.fitted(v[[1]], 0.0068482)
 stopifnot(is.almost.fitted(sigma_irreg^2, 0.00320083))
 stopifnot(is.almost.fitted(sigma_drift^2, 0.00153314))
 
-## @knitr output_figures
+## output_figures
 
 title <- 'Figure 3.5.1. Trend of deterministic level and stochastic slope model for Finnish fatalities'
 title <- paste('図 3.5.1 フィンランド事故データの',

@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- ukdrivers
 x <- ukpetrol
@@ -11,12 +11,12 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model
+## show_model
 
 model_file <- 'models/fig05_01.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 fit <- stan(file = model_file, data = standata,
             iter = 2000, chains = 4)
@@ -33,7 +33,7 @@ is.almost.fitted(mu, 5.8787)
 is.almost.fitted(beta, -0.67166)
 stopifnot(is.almost.fitted(sigma_irreg^2, 0.0230137))
 
-## @knitr output_figures
+## output_figures
 
 title <- 'Figure 5.1. Deterministic level and explanatory variable ‘log petrol price’.'
 title <- '図 5.1 確定的レベルと説明変数「対数石油価格」'

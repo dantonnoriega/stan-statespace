@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- ukdrivers
 w <- ukseats
@@ -11,12 +11,12 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model
+## show_model
 
 model_file <- 'models/fig06_04.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 fit <- stan(file = model_file, data = standata,
             iter = 2000, chains = 4)
@@ -33,7 +33,7 @@ is.almost.fitted(lambda, -0.3785)
 # stopifnot(is.almost.fitted(sigma_irreg^2, 0.0104111))
 is.almost.fitted(sigma_irreg^2, 0.0104111)
 
-## @knitr output_figures
+## output_figures
 
 title <- 'Figure 6.4. Stochastic level and intervention variable.'
 title <- '図 6.4 確率的レベルと干渉変数'

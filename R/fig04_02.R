@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- ukdrivers
 
@@ -9,12 +9,12 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model
+## show_model
 
 model_file <- 'models/fig04_02.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 fit <- stan(file = model_file, data = standata,
             iter = 2000, chains = 4)
@@ -24,7 +24,7 @@ mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
 yhat <- get_posterior_mean(fit, par = 'yhat')[, 'mean-all chains']
 seasonal <- get_posterior_mean(fit, par = 'seasonal')[, 'mean-all chains']
 
-## @knitr output_figures
+## output_figures
 
 title <- 'Figure 4.2. Combined deterministic level and seasonal.'
 title <- '図 4.2 結合した確定的なレベルと季節要素'

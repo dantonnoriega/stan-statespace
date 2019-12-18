@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- ukdrivers
 x <- ukpetrol
@@ -13,12 +13,12 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model
+## show_model
 
 model_file <- 'models/fig07_01.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 fit <- stan(file = model_file, data = standata,
             iter = 2000, chains = 4)
@@ -37,7 +37,7 @@ is.almost.fitted(beta, -0.45213)
 stopifnot(is.almost.fitted(lambda, -0.19714))
 stopifnot(is.almost.fitted(sigma_irreg^2, 0.00740223))
 
-## @knitr output_figures
+## output_figures
 
 title <- paste('Figure 7.1. Deterministic level plus variables',
                'log petrol price and seat belt law.', sep = '\n')

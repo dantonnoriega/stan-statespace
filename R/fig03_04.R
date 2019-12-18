@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- ukdrivers
 
@@ -9,12 +9,12 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model
+## show_model
 
 model_file <- 'models/fig03_04.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 lmresult <- lm(y ~ x, data = data.frame(x = 1:length(y), y = as.numeric(y)))
 init <- list(list(mu = rep(mean(y), length(y)), v = coefficients(lmresult)[[2]],
@@ -35,7 +35,7 @@ stopifnot(is.almost.fitted(v, 0.00028897))
 stopifnot(is.almost.fitted(sigma_irreg^2, 0.00211869))
 stopifnot(is.almost.fitted(sigma_level^2, 0.0121271))
 
-## @knitr output_figures
+## output_figures
 
 title <- 'Figure 3.4. Trend of stochastic level and deterministic slope model.'
 title <- '図 3.4 確率的レベルと確定的傾きモデルのトレンド'

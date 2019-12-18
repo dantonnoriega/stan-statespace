@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- ukdrivers
 x <- ukpetrol
@@ -11,12 +11,12 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model
+## show_model
 
 model_file <- 'models/fig05_04.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 lmresult <- lm(y ~ x, data = data.frame(x = 1:length(y), y = as.numeric(y)))
 init <- list(list(mu = rep(mean(y), length(y)), beta = coefficients(lmresult)[[2]],
@@ -38,7 +38,7 @@ is.almost.fitted(beta, -0.26105)
 # stopifnot(is.almost.fitted(sigma_irreg^2, 0.0116673))
 is.almost.fitted(sigma_irreg^2, 0.0116673)
 
-## @knitr output_figures
+## output_figures
 
 title <- 'Figure 5.4. Stochastic level and deterministic explanatory variable ‘log petrol price’.'
 title <- '図 5.4 確率的レベルと確定的説明変数「対数石油価格」'

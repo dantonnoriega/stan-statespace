@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- ukdrivers
 x <- ukpetrol
@@ -13,12 +13,12 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model
+## show_model
 
 model_file <- 'models/fig07_02.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 lmresult <- lm(y ~ x, data = data.frame(x = 1:length(y), y = as.numeric(y)))
 init <- list(list(mu = rep(mean(y), length(y)), seasonal = rep(0, length(y)),
@@ -43,7 +43,7 @@ stopifnot(is.almost.fitted(sigma_irreg^2, 0.00378629))
 stopifnot(is.almost.fitted(sigma_level^2, 0.000267632))
 stopifnot(is.almost.fitted(sigma_seas^2, 0.0000011622))
 
-## @knitr output_figures
+## output_figures
 
 title <- paste('Figure 7.2. Stochastic level plus variables',
                'log petrol price and seat belt law.', sep = '\n')

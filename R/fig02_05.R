@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan
+## init_stan
 
 y <- norwegian_fatalities
 
@@ -9,13 +9,13 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model
+## show_model
 
 # can use the same model as fig02_03
 model_file <- 'models/fig02_03.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan
+## fit_stan
 
 fit <- stan(file = model_file, data = standata, chains = 4)
 stopifnot(is.converged(fit))
@@ -29,12 +29,9 @@ stopifnot(is.almost.fitted(sigma_irreg^2, 0.00326838))
 # stopifnot(is.almost.fitted(sigma_level^2, 0.0047026))
 is.almost.fitted(sigma_level^2, 0.0047026)
 
-## @knitr output_figures
+## output_figures
 
 title <- 'Figure 2.5. Stochastic level for Norwegian fatalities.'
-title <- '図 2.5 ノルウェイの事故に対する確率的レベル'
-
-# 原系列
 p <- autoplot(y)
 
 # stan
@@ -43,6 +40,5 @@ p <- autoplot(yhat, p = p, ts.colour = 'blue')
 p + ggtitle(title)
 
 title <- 'Figure 2.6. Irregular component for Norwegian fatalities.'
-title <- '図 2.6 ノルウェイの事故に対する確率的要素'
 autoplot(y - yhat, ts.linetype = 'dashed') + ggtitle(title)
 

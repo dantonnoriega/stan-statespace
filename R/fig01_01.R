@@ -1,6 +1,6 @@
 source('R/common.R', encoding = 'utf-8')
 
-## @knitr init_stan ----------
+## init_stan ----------
 
 y <- ukdrivers
 
@@ -9,18 +9,18 @@ standata <- within(list(), {
   n <- length(y)
 })
 
-## @knitr show_model ----------
+## show_model ----------
 
 model_file <- 'models/fig01_01.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
-## @knitr fit_stan ----------
+## fit_stan ----------
 
 fit <- stan(model_file, data = standata,
             iter = 2000, chains = 4)
 stopifnot(is.converged(fit))
 
-## @knitr output_figures ----------
+## output_figures ----------
 slope <- get_posterior_mean(fit, par = 'slope')[, 'mean-all chains']
 intercept <- get_posterior_mean(fit, par = 'intercept')[, 'mean-all chains']
 title <- paste('Figure 1.1. Scatter plot of the log of the number of UK drivers',
