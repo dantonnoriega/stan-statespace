@@ -8,41 +8,38 @@ standata <- within(list(), {
 })
 
 ## show_model
-# this model still does not fix the autocorrelation in the error
-# therefore, the samples for sigma_model will be low
+# this model still fails to capture autocorrelation in the model error
+# it also attempts to model a slope when there isn't one
+# this leads to poor convergences / sampling
 model_file <- 'models/fig03_01.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 ## fit_stan
 lmresult <- lm(y ~ x, data = data.frame(x = 1:length(y), y = as.numeric(y)))
 fit <- stan(file = model_file, data = standata,
-            control = list(max_treedepth = 15),
+            control = list(adapt_delta = .9, max_treedepth = 15),
             warmup = 2000,iter = 10000,
             chains = 2, seed = 12345)
 stopifnot(is.converged(fit))
 
+# model doesnt fit well because there is not evidence of a drift
+# the strong autocorrelation and overlap makes sampling the variances tough
 mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
 v <- get_posterior_mean(fit, par = 'v')[, 'mean-all chains']
 sigma_level <- get_posterior_mean(fit, par = 'sigma_level')[, 'mean-all chains']
 sigma_drift <- get_posterior_mean(fit, par = 'sigma_drift')[, 'mean-all chains']
-sigma_model <- get_posterior_mean(fit, par = 'sigma_model')[, 'mean-all chains']
+sigma_irreg <- get_posterior_mean(fit, par = 'sigma_irreg')[, 'mean-all chains']
 
 ## output_figures
 title <- 'Figure 3.1. Trend of stochastic linear trend model.'
 yhat <- ts(mu, start = start(y), frequency = frequency(y))
-# stan
 autoplot(y) +
   autolayer(yhat, series = 'fit', lty = 2) +
   ggtitle(title)
-
-fmt <- function(){
-  function(x) format(x, nsmall = 5, scientific = FALSE)
-}
 
 title <- 'Figure 3.2. Slope of stochastic linear trend model.'
 slope <- ts(v, start = start(y), frequency = frequency(y))
 autoplot(slope) +
   coord_cartesian(y = c(-.01, .01)) +
-  scale_y_continuous(labels = fmt()) +
   ggtitle(title)
 
 title <- 'Figure 3.3. Irregular component of stochastic linear trend model.'

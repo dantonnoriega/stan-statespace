@@ -62,3 +62,13 @@ is.converged <- function(stanfit) {
   summarized <- summary(stanfit)$summary
   all(summarized[!(rownames(summarized) %in% 'lp__'), 'Rhat'] < 1.1)
 }
+
+is.almost.fitted <- function(result, expected, tolerance = 0.05) {
+  print(sprintf("%0.4f vs %0.4f (%0.3f%%)", result, expected,
+    (abs(expected - result)/expected)*100))
+  if ((abs(expected - result)/expected) > tolerance) {
+    return(FALSE)
+  } else {
+    return(TRUE)
+  }
+}
