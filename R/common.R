@@ -3,6 +3,7 @@ pkgs <- c(
   "rstan",
   "ggplot2",
   "ggfortify",
+  "coda",
   "forecast")
 missing_vec <- !sapply(pkgs, require, character.only = T)
 invisible(sapply(pkgs[missing_vec], install.packages))
@@ -59,7 +60,7 @@ finnish_fatalities <- log(ts(finnish_fatalities, start = 1970, frequency = 1))
 ## func_defs
 
 is.converged <- function(stanfit) {
-  summarized <- summary(stanfit)$summary
+  summarized <- na.omit(summary(stanfit)$summary)
   all(summarized[!(rownames(summarized) %in% 'lp__'), 'Rhat'] < 1.1)
 }
 
@@ -71,4 +72,11 @@ is.almost.fitted <- function(result, expected, tolerance = 0.05) {
   } else {
     return(TRUE)
   }
+}
+
+plot_y_yhat <- function(y, yhat, title) {
+  yhat <- ts(c(yhat), start = start(y), frequency = frequency(y))
+  autoplot(y) +
+    autolayer(yhat, color = 'blue') +
+    ggtitle(title)
 }

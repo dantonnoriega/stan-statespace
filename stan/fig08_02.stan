@@ -26,22 +26,36 @@ transformed data {
   //   print("G[", i, "] = ", G[i]);
 }
 parameters {
-  real mu;
+  vector[n] mu;
   vector[(s-1)] Theta0;
   real<lower=0> sigma_irreg;
+  real<lower=0> sigma_level;
 }
 transformed parameters {
   vector[(s-1)] Theta[n];
   vector[n] yhat;
   Theta[1] = Theta0;
-  yhat[1] = mu + Z * Theta[1];
+  yhat[1] = mu[1] + Z * Theta[1];
   for(t in 2:n) {
     Theta[t] = G * Theta[t-1];
-    yhat[t] = mu + Z * Theta[t];
+    yhat[t] = mu[t] + Z * Theta[t];
   }
 }
 model {
-  mu ~ normal(0,5);
-  Theta0 ~ normal(0,5);
+  vector[n-1] d_mu;
+  for(t in 1:(n-1))
+    d_mu[t] = mu[t+1] - mu[t];
+
+  mu[1] ~ normal(7,2);
+  Theta0 ~ normal(0,1);
+  d_mu ~ normal(0, sigma_level);
+  sigma_level ~ exponential(5);
+  sigma_irreg ~ exponential(5);
   y ~ normal(yhat, sigma_irreg);
+}
+
+generated quantities {
+  vector[n] seasonal;
+  for(t in 1:n)
+    seasonal[t] = Z * Theta[t];
 }

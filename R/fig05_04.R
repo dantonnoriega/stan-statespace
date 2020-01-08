@@ -1,54 +1,52 @@
 source('R/common.R', encoding = 'utf-8')
 
 ## init_stan
-
 y <- ukdrivers
 x <- ukpetrol
-
 standata <- within(list(), {
   y <- as.vector(y)
   x <- as.vector(x)
   n <- length(y)
+  init_mu = c(y[1],sd(y[1:5])) # add mu init prior; sd() uses first 5 obs
 })
 
 ## show_model
-
-model_file <- 'models/fig05_04.stan'
+# this model samples poorly because of it fails to handle the
+# seaonality; see page 54 of book:
+#    "For the moment, we do not draw any practical conclusions from the analyses of the
+#     UK drivers KSI series presented in this chapter as an essential component
+#     is missing in model (5.2), which is the seasonal.
+model_file <- 'stan/fig05_04.stan'
 cat(paste(readLines(model_file)), sep = '\n')
-
-## fit_stan
-
-lmresult <- lm(y ~ x, data = data.frame(x = 1:length(y), y = as.numeric(y)))
-init <- list(list(mu = rep(mean(y), length(y)), beta = coefficients(lmresult)[[2]],
-                  sigma_level = sd(y) / 2, sigma_irreg = 0.001))
-
-fit <- stan(file = model_file, data = standata,
-            iter = 6000, chains = 4)
-stopifnot(is.converged(fit))
+model <- rstan::stan_model(model_file)
+fit <- rstan::sampling(model, data = standata,
+            # up the iterations and shrink adapt_delta
+            # compensates for imposing a poor model
+            control = list(adapt_delta = .99, max_treedepth = 16),
+            warmup = 2000,
+            iter = 10000, chains = 2)
+is.converged(fit)
 
 yhat <- get_posterior_mean(fit, par = 'yhat')[, 'mean-all chains']
 mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
 beta <- get_posterior_mean(fit, par = 'beta')[, 'mean-all chains']
-sigma <- get_posterior_mean(fit, par = 'sigma')[, 'mean-all chains']
-sigma_irreg <- sigma[[1]]
-# stopifnot(is.almost.fitted(mu[[1]], 6.824))
-is.almost.fitted(mu[[1]], 6.824)
-# stopifnot(is.almost.fitted(beta, -0.26105))
+sigma_mu <- get_posterior_mean(fit, par = 'sigma_mu')[, 'mean-all chains']
+sigma_irreg <- get_posterior_mean(fit, par = 'sigma_irreg')[, 'mean-all chains']
+is.almost.fitted(mu[[1]], 6.824) # i think this number is wrong in book
 is.almost.fitted(beta, -0.26105)
-# stopifnot(is.almost.fitted(sigma_irreg^2, 0.0116673))
 is.almost.fitted(sigma_irreg^2, 0.0116673)
 
 ## output_figures
-
 title <- 'Figure 5.4. Stochastic level and deterministic explanatory variable ‘log petrol price’.'
-title <- '図 5.4 確率的レベルと確定的説明変数「対数石油価格」'
-
-p <- autoplot(y)
 yhat <- ts(yhat, start = start(y), frequency = frequency(y))
-p <- autoplot(yhat, p = p, ts.colour = 'blue')
-p + ggtitle(title)
-
+layout(matrix(1:2, nrow=2))
+plot(y, main = title)
+lines(yhat, col = 4, lty = 3, lwd = 2)
+legend(x = par("usr")[1], y = par("usr")[4],
+  col = c(1,4), lty=c(1,3), seg.len = 3, cex = .6,
+  legend = c("log UK drivers KSI", "stochastic level + beta*log(PETROL PRICE)"))
+#
 title <- 'Figure 5.5. Irregular for stochastic level model with deterministic explanatory variable ‘log petrol price’.'
-title <- paste('図 5.5 確定的説明変数「対数石油価格」のある',
-               '確率的レベル・モデルの不規則要素', sep = '\n')
-autoplot(y - yhat, ts.linetype = 'dashed') + ggtitle(title)
+plot(y - yhat, lty = 3, main = title)
+
+forecast::ggtsdisplay(y - yhat) # LOADS of seasonality/autocorrelation in the model

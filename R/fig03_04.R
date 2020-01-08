@@ -12,7 +12,7 @@ standata <- within(list(), {
 # no longer assumes the drift changes over time
 # however, still fails to capture autocorrelated model errors
 # as a result, `sigma_irreg` will sample poorly
-model_file <- 'models/fig03_04.stan'
+model_file <- 'stan/fig03_04.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 ## fit_stan
 lmresult <- lm(y ~ x, data = data.frame(x = 1:length(y), y = as.numeric(y)))

@@ -9,10 +9,9 @@ standata <-
   })
 
 ## show_model
-model_file <- 'models/fig03_05.stan'
+model_file <- 'stan/fig03_05.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 ## fit_stan
-lmresult <- lm(y ~ x, data = data.frame(x = 1:length(y), y = as.numeric(y)))
 fit <- stan(file = model_file, data = standata,
             control = list(adapt_delta = .95, max_treedepth = 15),
             warmup = 2000, iter = 10000,
@@ -32,18 +31,18 @@ is.almost.fitted(sigma_irreg, 0.00320083)
 # stan
 yhat <- ts(mu, start = start(y), frequency = frequency(y))
 title <- 'Figure 3.5.1. Trend of deterministic level and stochastic slope model for Finnish fatalities'
-autoplot(y) +
+p1 <- autoplot(y) +
   autolayer(yhat, series = 'fit', lty = 2) +
   ggtitle(title)
-
 title <- 'Figure 3.5.2 Stochastic slope component for Finnish fatalities.'
 slope <- ts(v, start = start(y), frequency = frequency(y))
-autoplot(slope, lty=3) +
+p2 <- autoplot(slope, lty=3) +
   ggplot2::geom_hline(yintercept=0) +
   ggtitle(title)
+gridExtra::grid.arrange(p1, p2)
 
 title <- 'Figure 3.6. Irregular component for Finnish fatalities.'
-autoplot(y - yhat, ts.linetype = 'dashed') + ggtitle(title)
+autoplot(y - yhat, linetype = 'dashed') + ggtitle(title)
 
 forecast::ggtsdisplay(y - yhat)
 Box.test(y - yhat, lag = 1, type = "Ljung")

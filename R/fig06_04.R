@@ -1,10 +1,8 @@
 source('R/common.R', encoding = 'utf-8')
 
 ## init_stan
-
 y <- ukdrivers
 w <- ukseats
-
 standata <- within(list(), {
   y <- as.vector(y)
   w <- as.vector(w)
@@ -12,40 +10,33 @@ standata <- within(list(), {
 })
 
 ## show_model
-
-model_file <- 'models/fig06_04.stan'
+model_file <- 'stan/fig06_04.stan'
 cat(paste(readLines(model_file)), sep = '\n')
-
-## fit_stan
-
-fit <- stan(file = model_file, data = standata,
-            iter = 2000, chains = 4)
-stopifnot(is.converged(fit))
+model <- rstan::stan_model(model_file)
+fit <- rstan::sampling(model, data = standata,
+            control = list(adapt_delta = .9, max_treedepth = 12),
+            warmup = 1000, iter = 4000, chains = 4)
+is.converged(fit)
 
 yhat <- get_posterior_mean(fit, par = 'yhat')[, 'mean-all chains']
 mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
 lambda <- get_posterior_mean(fit, par = 'lambda')[, 'mean-all chains']
 sigma_irreg <- get_posterior_mean(fit, par = 'sigma_irreg')[, 'mean-all chains']
 
-stopifnot(is.almost.fitted(mu[[1]], 7.4107))
-# stopifnot(is.almost.fitted(lambda, -0.3785))
+is.almost.fitted(mu[[1]], 7.4107)
 is.almost.fitted(lambda, -0.3785)
-# stopifnot(is.almost.fitted(sigma_irreg^2, 0.0104111))
 is.almost.fitted(sigma_irreg^2, 0.0104111)
 
 ## output_figures
-
 title <- 'Figure 6.4. Stochastic level and intervention variable.'
-title <- '図 6.4 確率的レベルと干渉変数'
-
-p <- autoplot(y)
 yhat <- ts(yhat, start = start(y), frequency = frequency(y))
-p <- autoplot(yhat, p = p, ts.colour = 'blue')
-p + ggtitle(title)
+autoplot(y) +
+  autolayer(yhat, color = 'blue') +
+  ggtitle(title)
 
 title <- paste('Figure 6.5. Irregular component for',
                'stochastic level model with intervention variable.', sep = '\n')
-title <- paste('図 6.5 確率的レベル・モデルに',
-               '干渉変数がある場合の不規則要素', sep = '\n')
-# テキストのタイトルは誤植
-autoplot(y - yhat, ts.linetype = 'dashed') + ggtitle(title)
+autoplot(y - yhat, lty = 'dashed') + ggtitle(title)
+
+
+

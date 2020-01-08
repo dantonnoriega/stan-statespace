@@ -11,15 +11,14 @@ standata <- within(list(), {
 # this model still fails to capture autocorrelation in the model error
 # it also attempts to model a slope when there isn't one
 # this leads to poor convergences / sampling
-model_file <- 'models/fig03_01.stan'
+model_file <- 'stan/fig03_01.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 ## fit_stan
-lmresult <- lm(y ~ x, data = data.frame(x = 1:length(y), y = as.numeric(y)))
 fit <- stan(file = model_file, data = standata,
             control = list(adapt_delta = .9, max_treedepth = 15),
             warmup = 2000,iter = 10000,
             chains = 2, seed = 12345)
-stopifnot(is.converged(fit))
+is.converged(fit)
 
 # model doesnt fit well because there is not evidence of a drift
 # the strong autocorrelation and overlap makes sampling the variances tough
@@ -43,7 +42,7 @@ autoplot(slope) +
   ggtitle(title)
 
 title <- 'Figure 3.3. Irregular component of stochastic linear trend model.'
-autoplot(y - yhat, ts.linetype = 'dashed') + ggtitle(title)
+autoplot(y - yhat, linetype = 'dashed') + ggtitle(title)
 
 # can see in acf plots the strong autocorrelation
 forecast::ggtsdisplay(y - yhat)

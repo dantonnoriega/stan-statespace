@@ -11,19 +11,19 @@ standata <- within(list(), {
 # add more iterations because the model error will be poorly sampled
 # this is because the model incorrectly (but on purpose) assumes
 # the model error is iid when it is clearly not
-model_file <- 'models/fig02_03.stan'
+model_file <- 'stan/fig02_03.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 fit <- stan(file = model_file, data = standata,
             warmup = 4000, iter = 20000, chains = 2,
             control = list(adapt_delta = .8, max_treedepth = 15))
-stopifnot(is.converged(fit))
+is.converged(fit)
 #
 mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
 sigma_irreg <- get_posterior_mean(fit, par = 'sigma_irreg')[, 'mean-all chains']
 sigma_level <- get_posterior_mean(fit, par = 'sigma_level')[, 'mean-all chains']
-stopifnot(is.almost.fitted(mu[[1]], 7.4150))
-stopifnot(is.almost.fitted(sigma_irreg^2, 0.00222157))
-stopifnot(is.almost.fitted(sigma_level^2, 0.011866))
+is.almost.fitted(mu[[1]], 7.4150)
+is.almost.fitted(sigma_irreg^2, 0.00222157)
+is.almost.fitted(sigma_level^2, 0.011866)
 
 ## output_figures
 # stan
@@ -35,7 +35,7 @@ autoplot(y) +
 
 # plot the residuals
 title <- 'Figure 2.4. Irregular component for local level model.'
-autoplot(y - yhat, ts.linetype = 'dashed') + ggtitle(title)
+autoplot(y - yhat, linetype = 'dashed') + ggtitle(title)
 
 # can see in acf plots the strong autocorrelation
 forecast::ggtsdisplay(y - yhat)

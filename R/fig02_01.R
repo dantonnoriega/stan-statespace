@@ -9,7 +9,7 @@ standata <- within(list(), {
 })
 
 ## show_model
-model_file <- 'models/fig02_01.stan'
+model_file <- 'stan/fig02_01.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 
 ## fit_stan
@@ -20,12 +20,11 @@ mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
 
 ## output_figures
 title <- 'Figure 2.1. Deterministic level.'
-p <- autoplot(y)
-# stan
-p <- p + geom_hline(yintercept = mu, colour = 'blue')
-p <- p + geom_hline(yintercept = mean(y),
-                    colour = 'red', linetype = 'dashed')
-p + ggtitle(title)
+autoplot(y) +
+  geom_hline(yintercept = mu, colour = 'blue') +
+  geom_hline(yintercept = mean(y),
+    colour = 'red', linetype = 'dashed') +
+  ggtitle(title)
 
 title <- 'Figure 2.2. Irregular component for deterministic level model.'
-autoplot(y - mu, ts.linetype = 'dashed') + ggtitle(title)
+autoplot(y - mu, lty = 'dashed') + ggtitle(title)

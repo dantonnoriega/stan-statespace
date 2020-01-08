@@ -4,11 +4,8 @@ data {
   vector[n] x;
 }
 parameters {
-  // 確定的レベル
   real mu;
-  // 確定的回帰係数
   real beta;
-  // 観測撹乱項
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
@@ -16,6 +13,8 @@ transformed parameters {
   yhat = mu + beta * x;
 }
 model {
-  // 式 5.3
+  //add init priors to mu, beta
+  mu ~ normal(0,3);
+  beta ~ normal(0,1);
   y ~ normal(yhat, sigma_irreg);
 }

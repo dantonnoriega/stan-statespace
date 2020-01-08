@@ -9,12 +9,13 @@ standata <- within(list(), {
 })
 
 ## show_model
-model_file <- 'models/fig04_02_v2.stan'
+model_file <- 'stan/fig04_02.stan'
 cat(paste(readLines(model_file)), sep = '\n')
-fit <- stan(file = model_file, data = standata,
+model <- rstan::stan_model(model_file)
+fit <- rstan::sampling(model, data = standata,
             control = list(adapt_delta = .8, max_treedepth = 10),
             warmup = 1000, iter = 2000, chains = 2)
-stopifnot(is.converged(fit))
+is.converged(fit)
 
 mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
 yhat <- get_posterior_mean(fit, par = 'yhat')[, 'mean-all chains']
@@ -27,8 +28,8 @@ if(grepl('v2', model_file)) {
 
 
 ## output_figures
-yhat <- ts(yhat, start = start(y), frequency = frequency(y))
 title <- 'Figure 4.2. Combined deterministic level and seasonal.'
+yhat <- ts(yhat, start = start(y), frequency = frequency(y))
 autoplot(y) +
   autolayer(yhat, series = 'fit', lty = 2) +
   ggtitle(title)
@@ -47,5 +48,5 @@ autoplot(seasonal, color = 'blue') +
   ggtitle(title)
 
 title <- 'Figure 4.5. Irregular component for deterministic level and seasonal model.'
-autoplot(y - yhat, ts.linetype = 'dashed') + ggtitle(title)
+autoplot(y - yhat, linetype = 'dashed') + ggtitle(title)
 

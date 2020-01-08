@@ -4,13 +4,9 @@ data {
   vector[n] w;
 }
 parameters {
-  // 確率的レベル
   vector[n] mu;
-  // 確定的係数
   real lambda;
-  // レベル撹乱項
   real<lower=0> sigma_level;
-  // 観測撹乱項
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
@@ -18,9 +14,12 @@ transformed parameters {
   yhat = mu + lambda * w;
 }
 model {
-  // 式 6.1
-  for(t in 2:n)
-    mu[t] ~ normal(mu[t-1], sigma_level);
-
+  vector[n-1] delta;
+  delta[1:(n-1)] = mu[2:n] - mu[1:(n-1)];
+  mu[1] ~ normal(7,1);
+  lambda ~ normal(0,1);
+  sigma_level ~ exponential(2);
+  sigma_irreg ~ exponential(2);
+  delta ~ normal(0, sigma_level);
   y ~ normal(yhat, sigma_irreg);
 }
