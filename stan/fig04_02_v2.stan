@@ -27,22 +27,22 @@ transformed data {
 }
 parameters {
   real mu;
-  vector[(s-1)] Theta0;
+  vector[(s-1)] Gamma0;
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
-  vector[(s-1)] Theta[n];
+  vector[(s-1)] Gamma[n];
   vector[n] yhat;
-  Theta[1] = Theta0;
-  yhat[1] = mu + Z * Theta[1];
+  Gamma[1] = Gamma0;
+  yhat[1] = mu + Z * Gamma[1];
   for(t in 2:n) {
-    Theta[t] = G * Theta[t-1];
-    yhat[t] = mu + Z * Theta[t];
+    Gamma[t] = G * Gamma[t-1];
+    yhat[t] = mu + Z * Gamma[t];
   }
 }
 model {
   mu ~ normal(7,2);
-  Theta0 ~ normal(0,1);
+  Gamma0 ~ normal(0,1);
   sigma_irreg ~ exponential(2);
   y ~ normal(yhat, sigma_irreg);
 }

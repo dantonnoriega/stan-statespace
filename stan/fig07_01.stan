@@ -14,11 +14,11 @@ parameters {
 }
 transformed parameters {
   vector[n] seasonal;
-  vector[n] yhat;
+  vector[n] xreg;
   seasonal[1:(s-1)] = seas;
   for(t in s:n)
     seasonal[t] = -sum(seasonal[t-(s-1):t-1]);
-  yhat = mu + beta * x + lambda * w + seasonal;
+  xreg = beta * x + lambda * w;
 }
 model {
   mu ~ normal(7,2);
@@ -26,5 +26,9 @@ model {
   lambda ~ normal(0,1);
   seas ~ normal(0,1);
   sigma_irreg ~ exponential(5);
-  y ~ normal(yhat + seasonal, sigma_irreg);
+  y ~ normal(mu + xreg + seasonal, sigma_irreg);
+}
+generated quantities {
+  vector[n] yhat;
+  yhat = mu + xreg + seasonal;
 }

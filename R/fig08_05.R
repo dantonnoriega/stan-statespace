@@ -11,7 +11,7 @@ standata <- within(list(), {
  })
 
 ## show_model
-# reuse model 08_03
+# reuse model 08_05
 model_file <- 'stan/fig08_05.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 model <- rstan::stan_model(model_file)
@@ -20,6 +20,11 @@ kf_fit <- rstan::sampling(model, data = standata,
             warmup = 1000, iter = 6000, chains = 2)
 is.converged(kf_fit)
 
+a <- get_posterior_mean(kf_fit, par = 'a')[, 'mean-all chains']
+K <- get_posterior_mean(kf_fit, par = 'K')[, 'mean-all chains']
+FF <- get_posterior_mean(kf_fit, par = 'F')[, 'mean-all chains']
+
+# use model from fig 02_03
 model_file <- 'stan/fig02_03.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 model <- rstan::stan_model(model_file)
@@ -29,9 +34,6 @@ fit <- rstan::sampling(model, data = standata,
 is.converged(fit)
 
 mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
-a <- get_posterior_mean(kf_fit, par = 'a')[, 'mean-all chains']
-K <- get_posterior_mean(kf_fit, par = 'K')[, 'mean-all chains']
-FF <- get_posterior_mean(kf_fit, par = 'F')[, 'mean-all chains']
 
 ## generate credibility (confidence) intervals
 title <- 'Figure 8.5. Smoothed and filtered state of the local
@@ -67,10 +69,11 @@ legend(x = par("usr")[1]+2, y = par("usr")[4],
 
 ## generate credibility (confidence) intervals
 # i chose to standarize the errors from section 8.4
-title <- 'Figure 8.8.* Standardised one-step prediction errors of model in Section 8.4.*'
+title <- 'Figure 8.8.* Standardised one-step prediction errors of model in Section 8.4.'
 sub <- '*Book standardizes the errors from Section 7.3.'
 e <- v/sqrt(FF)
-plot(e, type = 'l', lwd = 1, lty = 3, main = title)
+layout(1)
+plot(e, type = 'l', lwd = 1, lty = 3, main = title, sub = sub)
 abline(h=0)
 legend(x = par("usr")[1], y = par("usr")[4],
   col = c(1), lty=c(3), seg.len = 3, cex = .6, box.lwd = 1.3,

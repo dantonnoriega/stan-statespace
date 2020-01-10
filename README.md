@@ -49,6 +49,7 @@ Each file is tied to a headline figure. Most files will also carry forward and p
 7. The UK seat belt and inflation models
     - fig07_01.R: Deterministic level and seasonal
     - fig07_02.R: Stochastic level and seasonal
+    - fig07_06.R: Stochastic level and deterministic seasonal
     - fig07_07.R: The UK inflation model
 8. General treatment of univariate state space models
     - fig08_02.R: Confidence Intervals *(NEW)*

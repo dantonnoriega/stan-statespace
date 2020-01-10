@@ -14,9 +14,8 @@ standata <- within(list(), {
 # as a result, `sigma_irreg` will sample poorly
 model_file <- 'stan/fig03_04.stan'
 cat(paste(readLines(model_file)), sep = '\n')
-## fit_stan
-lmresult <- lm(y ~ x, data = data.frame(x = 1:length(y), y = as.numeric(y)))
-fit <- stan(file = model_file, data = standata,
+model <- rstan::stan_model(model_file)
+fit <- rstan::sampling(model, data = standata,
             control = list(max_treedepth = 15),
             warmup = 2000, iter = 10000,
             chains = 2, seed = 12345)

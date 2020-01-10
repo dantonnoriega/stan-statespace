@@ -13,7 +13,6 @@ parameters {
   real beta;
   real lambda;
   real<lower=0> sigma_level;
-  real<lower=0> sigma_seas;
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
@@ -29,44 +28,32 @@ transformed parameters {
     seasonal[t] = -sum(seasonal[(t-s+1):(t-1)]);
 
   // build regressor component (non state space components)
-  xreg = beta * x + lambda * w + seasonal;
+  xreg = beta * x + lambda * w;
+
   //assign inits t=1
   a[1] = a1;
   P[1] = P1;
-  // print("a[1]:", a[1]);
-  // print("P[1]:", P[1]);
-  // print("F[1]:", F[1]);
-  // print("K[1]:", K[1]);
-  // print("a[2]:", a[2]);
-  // print("P[2]:", P[2]);
-  // print("----------")
 
   for (t in 1:n) {
     F[t] = P[t] + (sigma_irreg^2);
     K[t] = P[t] / F[t];
-    a[t+1] = a[t] + K[t]*(y[t] - a[t] - xreg[t]);
+    a[t+1] = a[t] + K[t]*(y[t] - a[t] - xreg[t] - seasonal[t]);
     P[t+1] = P[t]*(1 - K[t]) + (sigma_level^2);
-    // print("a[",t+1,"]:", a[t+1]);
-    // print("P[",t+1,"]:", P[t+1]);
-    // print("F[",t,"]:", F[t]);
-    // print("K[",t,"]:", K[t]);
   }
-
 }
 model {
   vector[n] v;
-  v = y - a[1:n];
+  v = y - a[1:n] - xreg - seasonal;
 
   beta ~ normal(-.5,.5);
   lambda ~ normal(0,1);
-  seas ~ normal(0,sigma_seas);
+  seas ~ normal(0,1);
   sigma_level ~ exponential(5);
-  sigma_seas ~ exponential(5);
   sigma_irreg ~ exponential(5);
 
   v ~ normal(0, sqrt(F));
 }
 generated quantities {
   vector[n] yhat;
-  yhat = a[1:n] + beta * x + lambda * w;
+  yhat = a[1:n] + xreg + seasonal;
 }

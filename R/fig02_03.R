@@ -13,7 +13,8 @@ standata <- within(list(), {
 # the model error is iid when it is clearly not
 model_file <- 'stan/fig02_03.stan'
 cat(paste(readLines(model_file)), sep = '\n')
-fit <- stan(file = model_file, data = standata,
+model <- rstan::stan_model(model_file)
+fit <- rstan::sampling(model, data = standata,
             warmup = 4000, iter = 20000, chains = 2,
             control = list(adapt_delta = .8, max_treedepth = 15))
 is.converged(fit)

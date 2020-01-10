@@ -11,11 +11,12 @@ standata <-
 ## show_model
 model_file <- 'stan/fig03_05.stan'
 cat(paste(readLines(model_file)), sep = '\n')
-## fit_stan
-fit <- stan(file = model_file, data = standata,
+model <- rstan::stan_model(model_file)
+fit <- rstan::sampling(model, data = standata,
             control = list(adapt_delta = .95, max_treedepth = 15),
             warmup = 2000, iter = 10000,
             chains = 2, seed = 12345)
+
 stopifnot(is.converged(fit))
 
 mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']

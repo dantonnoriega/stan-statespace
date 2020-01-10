@@ -10,71 +10,47 @@ standata <- within(list(), {
   x <- as.vector(x)
   w <- as.vector(w)
   n <- length(y)
-  a1 <- 0
-  P1 <- .1
+  a1 <- y[1] # initialize with starting y[1]
+  P1 <- 1
 })
 
-## stan model
+## kalman filter version of model in section 7.3
 model_file <- 'stan/fig08_08.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 model <- rstan::stan_model(model_file)
-fit <- rstan::sampling(model, data = standata,
-            control = list(adapt_delta = .8, max_treedepth = 16),
-            warmup = 1000, iter = 4000, chains = 4)
-is.converged(fit)
+kf_fit <- rstan::sampling(model, data = standata,
+            control = list(adapt_delta = .9, max_treedepth = 16),
+            warmup = 1000, iter = 3000, chains = 4)
+is.converged(kf_fit)
 
-model_file <- 'stan/fig02_03.stan'
-cat(paste(readLines(model_file)), sep = '\n')
-model <- rstan::stan_model(model_file)
-fit <- rstan::sampling(model, data = standata,
-            control = list(adapt_delta = .8, max_treedepth = 10),
-            warmup = 1000, iter = 6000, chains = 2)
-is.converged(fit)
-
-mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
+yhat <- get_posterior_mean(kf_fit, par = 'yhat')[, 'mean-all chains']
 a <- get_posterior_mean(kf_fit, par = 'a')[, 'mean-all chains']
 K <- get_posterior_mean(kf_fit, par = 'K')[, 'mean-all chains']
 FF <- get_posterior_mean(kf_fit, par = 'F')[, 'mean-all chains']
 
-## generate credibility (confidence) intervals
-title <- 'Figure 8.5. Smoothed and filtered state of the local
-  level model applied to Norwegian road traffic fatalities.'
-mu <- ts(mu, start = start(y), frequency = frequency(y))
-a <- ts(a, start = start(y), frequency = frequency(y)) # drop first obs
-a[1] <- NA # drop initial guess
-layout(1)
-plot(mu, lwd = 1.2, main = title)
-lines(a, col = 4, lty = 3)
-legend(x = par("usr")[1], y = par("usr")[3]*1.01,
-  col = c(1,4), lty=c(1,3), seg.len = 3, cex = .6,
-  legend = c("smoothed level","filtered level"))
+# plot kalman filter vs data
+title <- 'Kalman Filter model of Section 7.3'
+plot_y_yhat(y, yhat, title)
 
-## generate credibility (confidence) intervals
-title <- 'Figure 8.7. One-step ahead prediction errors (top) and
-their variances (bottom) for the local level model applied to Norwegian
-road traffic fatalities.'
+# plot standardized residuals of kalman filter on model in section 7.3
+title <- 'Figure 8.8. Standardised one-step prediction errors of model in Section 7.3.'
+yhat <- ts(yhat, start = start(y), frequency = frequency(y)) # drop first obs
+v <- ts(y - yhat, start = start(y), frequency = frequency(y)) # drop first obs
 FF <- ts(FF, start = start(y), frequency = frequency(y))
-v <- ts(y - a, start = start(y), frequency = frequency(y)) # drop first obs
-a[1] <- NA # drop initial guess
-layout(1:2)
-plot(v, type = 'l', lwd = 1, lty = 3, main = title)
-abline(h=0)
-legend(x = par("usr")[1], y = par("usr")[4],
-  col = c(1), lty=c(3), seg.len = 3, cex = .6, box.lwd = 1.3,
-  legend = c("prediction errors"))
-plot(FF, type = 'l', col = 1, lty = 3)
-legend(x = par("usr")[1]+2, y = par("usr")[4],
-  col = c(1), lty=c(3), seg.len = 3, cex = .6, box.lwd = 1.3,
-  legend = c("prediction errors"))
-
-
-## generate credibility (confidence) intervals
-# i chose to standarize the errors from section 8.4
-title <- 'Figure 8.8.* Standardised one-step prediction errors of model in Section 8.4.*'
-sub <- '*Book standardizes the errors from Section 7.3.'
 e <- v/sqrt(FF)
+e <- tail(e, -14) # drop first 14 lags; see page 90
 plot(e, type = 'l', lwd = 1, lty = 3, main = title)
 abline(h=0)
 legend(x = par("usr")[1], y = par("usr")[4],
   col = c(1), lty=c(3), seg.len = 3, cex = .6, box.lwd = 1.3,
   legend = c("prediction errors"))
+
+title <- paste('Figure 8.9. Correlogram of',
+  'standardised one-step prediction errors in Figure 8.8, first 10 lags.')
+forecast::ggAcf(e, 10) + ggtitle(title)
+
+# this is hard to make! no obvious break points
+title <- paste('Figure 8.10. Histogram of standardised one-step',
+  'prediction errors in Figure 8.8.')
+hist(e, main = title, breaks = seq(-3.4,3.4,.4), prob = TRUE, ylim = c(0,.4))
+curve(dnorm(x, mean(e), sd(e)), add= TRUE, lty = 3)

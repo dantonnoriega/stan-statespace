@@ -10,10 +10,9 @@ standata <- within(list(), {
 ## show_model ----------
 model_file <- 'stan/fig01_01.stan'
 cat(paste(readLines(model_file)), sep = '\n')
-
-## fit_stan ----------
-fit <- stan(model_file, data = standata,
-            iter = 2000, chains = 4)
+model <- rstan::stan_model(model_file)
+fit <- rstan::sampling(model, data = standata,
+  iter = 2000, chains = 4)
 stopifnot(is.converged(fit))
 
 ## output_figures ----------

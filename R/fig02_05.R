@@ -14,9 +14,9 @@ standata <- within(list(), {
 # can use the same model as fig02_03
 model_file <- 'stan/fig02_03.stan'
 cat(paste(readLines(model_file)), sep = '\n')
-
-## fit_stan
-fit <- stan(file = model_file, data = standata, chains = 4)
+model <- rstan::stan_model(model_file)
+fit <- rstan::sampling(model, data = standata,
+  chains = 2, seed = 12345)
 is.converged(fit)
 
 mu <- get_posterior_mean(fit, par = 'mu')[, 'mean-all chains']
