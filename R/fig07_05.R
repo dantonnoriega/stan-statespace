@@ -24,9 +24,7 @@ yhat_07_01 <- get_posterior_mean(fit_07_01, par = 'yhat')[, 'mean-all chains']
 
 title <- paste('Figure 7.5. Correlogram of irregular component of',
   'completely deterministic level and seasonal model.')
-forecast::ggAcf(y - yhat_07_06, 14) + ggtitle(title)
-
-forecast::ggtsdisplay(y - yhat_07_06)
+forecast::ggAcf(y - yhat_07_01, 14) + ggtitle(title)
 
 
 ## 7.6. model with stochastic level, deterministic seasonal --------

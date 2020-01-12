@@ -24,6 +24,10 @@ All the original files were edit to be more concise. In many cases, I switch fro
 
 Each file is tied to a headline figure. Most files will also carry forward and plot any proceeding plots between one headline figure and the next e.g. `fig04_02.R` creates figures `4.2` - `4.5`, up to the next headline file `fig04_06.R`. This is not always the case, particularly in Chapter 8 where consecutive plots jump between different datasets. Instead, in Chapter 8, I sort of pick and choose the figures where I thought there was the most to be learned from attempted replication.
 
+Figures that I added are labeled with "*(NEW)*" in the list below.
+
+I'll add more over time. Feel free to contribute as well.
+
 1. Introduction
     - fig01_01.R: Linear regression
 2. The local level model
@@ -47,7 +51,7 @@ Each file is tied to a headline figure. Most files will also carry forward and p
 7. The UK seat belt and inflation models
     - fig07_01.R: Deterministic level and seasonal
     - fig07_02.R: Stochastic level and seasonal
-    - fig07_06.R: Stochastic level and deterministic seasonal *(NEW)*
+    - fig07_05.R: Stochastic level and deterministic seasonal *(NEW)*
     - fig07_07.R: The UK inflation model
 8. General treatment of univariate state space models
     - fig08_02.R: Confidence Intervals *(NEW)*
