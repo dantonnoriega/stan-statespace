@@ -1,5 +1,6 @@
 /*
   SOURCE: https://gist.github.com/jrnold/4700387#file-kalman-stan
+  EDITED BY: DANTON NORIEGA
 
   Multivariate Dynamic linear model
 

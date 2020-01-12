@@ -1,4 +1,7 @@
 /*
+  SOURCE: https://gist.github.com/jrnold/4700387#file-kalman-stan
+  EDITED BY: DANTON NORIEGA
+
   Multivariate Dynamic linear model
 
   estimated with
@@ -115,8 +118,6 @@ transformed parameters {
   }
 }
 model {
-  real llik_obs[n];
-  real llik;
   vector[p] v[n];
   for (i in 1:n) {
     v[i] = y[i] - Z * a[i];
@@ -136,12 +137,12 @@ generated quantities {
 
   // generate forecasted values
   a_fc[1] = T * a[n + 1];
-  P_fc[1] = T * P[n + 1] * T' + R * Q * R'; // notice L' => T'
+  P_fc[1] = T * P[n + 1] * T' + R * Q * R'; // notice L' becomes T'
   yhat_fc[1] = Z * a[n + 1];
   F_fc[1] = Z * P[n + 1] * Z' + H;
   for (i in 2:h) {
     a_fc[i] = T * a_fc[i - 1];
-    P_fc[i] = T * P_fc[i - 1] * T' + R * Q * R';
+    P_fc[i] = T * P_fc[i - 1] * T' + R * Q * R'; // notice L' becomes T'
     yhat_fc[i] = Z * a_fc[i - 1];
     F_fc[i] = Z * P_fc[i - 1] * Z' + H;
   }

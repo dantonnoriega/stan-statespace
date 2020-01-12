@@ -16,15 +16,13 @@ SOURCE: http://www.ssfpack.com/CKbook.html
     - `UKinflation.txt`
     - `UKfrontrearseatKSI.txt`
 
-
-
 ## R scripts
 
 All the R scripts are in `R/`.
 
-All the files were edit to be more concise. In many cases, I switch from using ggplot2 to base R graphics.
+All the original files were edit to be more concise. In many cases, I switch from using ggplot2 to base R graphics.
 
-Each file is tied to a headline figure. Most files will also carry forward and plot any complimentary plots between one headline figure and the next e.g. `fig04_02.R` creates figures `4.2` - `4.5`, up to the next headline file `fig04_06.R`.
+Each file is tied to a headline figure. Most files will also carry forward and plot any proceeding plots between one headline figure and the next e.g. `fig04_02.R` creates figures `4.2` - `4.5`, up to the next headline file `fig04_06.R`. This is not always the case, particularly in Chapter 8 where consecutive plots jump between different datasets. Instead, in Chapter 8, I sort of pick and choose the figures where I thought there was the most to be learned from attempted replication.
 
 1. Introduction
     - fig01_01.R: Linear regression
@@ -49,11 +47,13 @@ Each file is tied to a headline figure. Most files will also carry forward and p
 7. The UK seat belt and inflation models
     - fig07_01.R: Deterministic level and seasonal
     - fig07_02.R: Stochastic level and seasonal
-    - fig07_06.R: Stochastic level and deterministic seasonal
+    - fig07_06.R: Stochastic level and deterministic seasonal *(NEW)*
     - fig07_07.R: The UK inflation model
 8. General treatment of univariate state space models
     - fig08_02.R: Confidence Intervals *(NEW)*
     - fig08_05.R: Filtering and Prediction *(NEW)*
+    - fig08_08.R: Standardised one-step prediction errors of model *(NEW)*
+    - fig08_14.R: Filtered trend, and five-year forecasts for Finnish fatalities *(NEW)*
 9. Multivariate time series analysis
 10. State space and Box–Jenkins methods for time series analysis
 
