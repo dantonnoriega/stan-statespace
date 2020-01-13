@@ -28,12 +28,15 @@ forecast::ggAcf(y - yhat_07_01, 14) + ggtitle(title)
 
 
 ## 7.6. model with stochastic level, deterministic seasonal --------
+## lots of multicollinearity here.
+## in this model, i dont think the regressors are necessary.
+## but thats what the book is doing so...
 model_file <- 'stan/fig07_06.stan'
 cat(paste(readLines(model_file)), sep = '\n')
 model <- rstan::stan_model(model_file)
 fit_07_06 <- rstan::sampling(model, data = standata,
-            control = list(adapt_delta = .9, max_treedepth = 15),
-            warmup = 1000, iter = 4000, chains = 2)
+            control = list(adapt_delta = .95, max_treedepth = 15),
+            warmup = 2000, iter = 10000, chains = 2)
 is.converged(fit_07_06)
 yhat_07_06 <- get_posterior_mean(fit_07_06, par = 'yhat')[, 'mean-all chains']
 

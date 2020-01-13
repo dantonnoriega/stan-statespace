@@ -14,6 +14,7 @@ parameters {
   real<lower=0> sigma_irreg;
 }
 transformed parameters {
+  vector[n] yhat;
   vector[n] xreg;
   vector[n] seasonal;
   //deterministic seasonal component
@@ -21,6 +22,7 @@ transformed parameters {
   for(t in s:n)
     seasonal[t] = -sum(seasonal[(t-s+1):(t-1)]);
   xreg = beta * x + lambda * w;
+  yhat = mu + xreg + seasonal;
 }
 model {
   vector[n-1] d_mu;
@@ -28,18 +30,14 @@ model {
   for(t in 1:(n-1))
     d_mu[t] = mu[t+1] - mu[t];
 
-  mu[1] ~ normal(7,2);
-  beta ~ normal(-.5,.5);
-  lambda ~ normal(0,1);
-  seas ~ normal(0,1);
+  mu[1] ~ normal(7,1);
+  beta ~ normal(0,.5);
+  lambda ~ normal(0,.5);
+  seas ~ normal(0,.1);
 
-  sigma_level ~ exponential(5);
-  sigma_irreg ~ exponential(5);
+  sigma_level ~ exponential(10);
+  sigma_irreg ~ exponential(10);
 
   d_mu ~ normal(0, sigma_level);
-  y ~ normal(mu + xreg + seasonal, sigma_irreg);
-}
-generated quantities {
-  vector[n] yhat;
-  yhat = mu + xreg + seasonal;
+  y ~ normal(yhat, sigma_irreg);
 }

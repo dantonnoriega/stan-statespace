@@ -21,8 +21,8 @@ transformed parameters {
   xreg = beta * x + lambda * w;
 }
 model {
-  mu ~ normal(7,2);
-  beta ~ normal(-.5,.5);
+  mu ~ normal(7,3);
+  beta ~ normal(0,2);
   lambda ~ normal(0,1);
   seas ~ normal(0,1);
   sigma_irreg ~ exponential(5);
