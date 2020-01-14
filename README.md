@@ -20,7 +20,7 @@ SOURCE: http://www.ssfpack.com/CKbook.html
 
 All the R scripts are in `R/`.
 
-All the original files were edit to be more concise. In many cases, I switch from using ggplot2 to base R graphics.
+All the original files were edited to be more concise. In many cases, I switch from using ggplot2 to base R graphics.
 
 Each file is tied to a headline figure. Most files will also carry forward and plot any proceeding plots between one headline figure and the next e.g. `fig04_02.R` creates figures `4.2` - `4.5`, up to the next headline file `fig04_06.R`. This is not always the case, particularly in Chapter 8 where consecutive plots jump between different datasets. Instead, in Chapter 8, I sort of pick and choose the figures where I thought there was the most to be learned from attempted replication.
 
